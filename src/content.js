@@ -56,31 +56,19 @@ export const wedding = {
   ],
 };
 
-/** Ceremony songs. Put the MP3 files in public/songs/. */
+/** Soft background music that loops across the site. */
 export const songs = [
   {
     id: "in-christ-alone",
     title: "In Christ Alone",
     titleZh: "唯独基督",
-    artist: "Keith & Kristyn Getty, Alison Krauss",
-    artistZh: "Keith & Kristyn Getty, Alison Krauss",
     src: "/songs/in-christ-alone.mp3",
   },
   {
     id: "great-is-thy-faithfulness",
     title: "Great Is Thy Faithfulness",
     titleZh: "你的信实广大",
-    artist: "Chris Rice",
-    artistZh: "Chris Rice",
     src: "/songs/great-is-thy-faithfulness.mp3",
-  },
-  {
-    id: "whom-have-i-but-you",
-    title: "Whom Have I But You",
-    titleZh: "除你以外",
-    artist: "Stream of Praise",
-    artistZh: "赞美之泉",
-    src: "/songs/chu-ni-yi-wai.mp3",
   },
 ];
 

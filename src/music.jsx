@@ -3,11 +3,11 @@ import { songs } from "./content.js";
 import { publicUrl } from "./publicUrl.js";
 
 const MusicContext = createContext(null);
+const BACKGROUND_VOLUME = 0.28;
 
 export function MusicProvider({ children }) {
   const audioRef = useRef(null);
   const indexRef = useRef(0);
-  const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
 
   const load = useCallback((nextIndex, shouldPlay) => {
@@ -16,7 +16,7 @@ export function MusicProvider({ children }) {
     if (!audio || !song) return;
 
     indexRef.current = nextIndex;
-    setIndex(nextIndex);
+    audio.volume = BACKGROUND_VOLUME;
     audio.src = publicUrl(song.src);
     audio.load();
     if (shouldPlay) {
@@ -28,6 +28,7 @@ export function MusicProvider({ children }) {
     const audio = audioRef.current;
     if (!audio || songs.length === 0) return;
 
+    audio.volume = BACKGROUND_VOLUME;
     audio.src = publicUrl(songs[0].src);
     audio.load();
     audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
@@ -52,6 +53,7 @@ export function MusicProvider({ children }) {
   const toggle = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    audio.volume = BACKGROUND_VOLUME;
     if (audio.paused) {
       audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
     } else {
@@ -60,45 +62,12 @@ export function MusicProvider({ children }) {
     }
   }, []);
 
-  const playSong = useCallback(
-    (id) => {
-      const next = songs.findIndex((song) => song.id === id);
-      if (next < 0) return;
-      const audio = audioRef.current;
-      if (!audio) return;
-
-      if (next === indexRef.current && !audio.paused) {
-        audio.pause();
-        setPlaying(false);
-        return;
-      }
-
-      if (next === indexRef.current) {
-        audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-        return;
-      }
-
-      load(next, true);
-    },
-    [load],
-  );
-
-  const value = useMemo(
-    () => ({
-      songs,
-      index,
-      active: songs[index] ?? null,
-      playing,
-      toggle,
-      playSong,
-    }),
-    [index, playing, toggle, playSong],
-  );
+  const value = useMemo(() => ({ playing, toggle }), [playing, toggle]);
 
   return (
     <MusicContext.Provider value={value}>
       {children}
-      <audio ref={audioRef} preload="metadata" className="site-audio" />
+      <audio ref={audioRef} preload="auto" className="site-audio" />
     </MusicContext.Provider>
   );
 }
