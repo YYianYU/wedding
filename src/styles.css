@@ -125,6 +125,7 @@ textarea {
 .music-toggle svg {
   width: 1.15rem;
   height: 1.15rem;
+  transform-origin: center;
 }
 
 .music-toggle:hover {
@@ -137,17 +138,22 @@ textarea {
   outline-offset: 2px;
 }
 
-.music-toggle.is-playing {
-  animation: music-pulse 1.8s ease-in-out infinite;
+.music-toggle.is-playing svg {
+  animation: music-spin 4.5s linear infinite;
 }
 
-@keyframes music-pulse {
-  0%,
-  100% {
-    transform: scale(1);
+@keyframes music-spin {
+  from {
+    transform: rotate(0deg);
   }
-  50% {
-    transform: scale(1.06);
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-toggle.is-playing svg {
+    animation: none;
   }
 }
 
