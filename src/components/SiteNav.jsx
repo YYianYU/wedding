@@ -1,14 +1,36 @@
 import { Link, useLocation } from "react-router-dom";
 import { wedding } from "../content.js";
 import { useI18n } from "../i18n.jsx";
+import { useMusic } from "../music.jsx";
+
+function MusicNoteIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M10 4v11.2a3.2 3.2 0 1 1-1.6-2.8V7.4l8-1.6v7.6a3.2 3.2 0 1 1-1.6-2.8V4.8L10 4z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
 
 export function SiteNav() {
   const { pathname } = useLocation();
   const { lang, setLang, t } = useI18n();
+  const { playing, toggle } = useMusic();
   const zh = lang === "zh";
 
   return (
     <header className="mast">
+      <button
+        type="button"
+        className={`music-toggle${playing ? " is-playing" : ""}`}
+        aria-label={playing ? t.pauseMusic : t.playMusic}
+        aria-pressed={playing}
+        onClick={toggle}
+      >
+        <MusicNoteIcon />
+      </button>
       <Link className="wordmark" to="/">
         {zh ? wedding.shortAZh : wedding.shortA}
         <span>{zh ? " 与 " : " & "}</span>

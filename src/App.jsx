@@ -9,6 +9,7 @@ import { Cover } from "./pages/Cover.jsx";
 import { Share } from "./pages/Share.jsx";
 import { Songs } from "./pages/Songs.jsx";
 import { Story } from "./pages/Story.jsx";
+import { MusicProvider } from "./music.jsx";
 import "./styles.css";
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -48,20 +49,22 @@ function MessagesPage() {
 export default function App() {
   return (
     <BrowserRouter basename={basename}>
-      <ScrollTop />
-      <Routes>
-        <Route path="/" element={<Cover />} />
-        <Route path="/contents" element={<Contents />} />
-        <Route path="/story" element={<Story />} />
-        <Route path="/ceremony" element={<Ceremony />} />
-        <Route path="/songs" element={<Songs />} />
-        <Route path="/gifts" element={<GiftsPage />} />
-        <Route path="/registry" element={<Navigate to="/gifts" replace />} />
-        <Route path="/future" element={<Navigate to="/gifts" replace />} />
-        <Route path="/messages" element={<MessagesPage />} />
-        <Route path="/photos" element={<Share />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <MusicProvider>
+        <ScrollTop />
+        <Routes>
+          <Route path="/" element={<Cover />} />
+          <Route path="/contents" element={<Contents />} />
+          <Route path="/story" element={<Story />} />
+          <Route path="/ceremony" element={<Ceremony />} />
+          <Route path="/songs" element={<Songs />} />
+          <Route path="/gifts" element={<GiftsPage />} />
+          <Route path="/registry" element={<Navigate to="/gifts" replace />} />
+          <Route path="/future" element={<Navigate to="/gifts" replace />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/photos" element={<Share />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </MusicProvider>
     </BrowserRouter>
   );
 }
