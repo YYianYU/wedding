@@ -21,17 +21,14 @@ export function Gift() {
           </p>
         ))}
         {codes.length > 0 ? (
-          <>
-            <p className="reading">{zh ? wedding.payNoteZh : wedding.payNote}</p>
-            <div className="pay-codes">
-              {codes.map((code) => (
-                <figure key={code.src}>
-                  <img src={publicUrl(code.src)} alt={zh ? code.altZh : code.alt} />
-                  <figcaption>{code.label}</figcaption>
-                </figure>
-              ))}
-            </div>
-          </>
+          <div className="pay-codes">
+            {codes.map((code) => (
+              <figure key={code.src}>
+                <img src={publicUrl(code.src)} alt={zh ? code.altZh : code.alt} />
+                <figcaption>{code.label}</figcaption>
+              </figure>
+            ))}
+          </div>
         ) : null}
       </div>
     </section>

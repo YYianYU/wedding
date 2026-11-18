@@ -39,17 +39,15 @@ export const wedding = {
   albumUrl: "https://drive.google.com/drive/folders/1TPN_bs-xBF_9WHZAvMslbYOh4XwdlKyJ",
   albumEndpoint: "https://script.google.com/macros/s/AKfycbwJ_ufIpb2fnX-KcP4_TTHl8l8JLK_24Zvp0jQtANPmvPY4NymxUWMAcxjY5NBau79o0w/exec",
   giftParagraphs: [
-    "Your presence is the greatest gift. Please do not feel that you must bring anything else.",
-    "If you would like to give something, we would be glad, and only as you wish. We love gifts with a little warmth in them: something cute, something decorative, a thing that makes a room feel like home, and a camera. We have not quite settled into a home of our own yet, so a red envelope toward that home is especially welcome.",
-    "However you choose to celebrate with us, we are simply happy you will be there.",
+    "If you would like to express your love and support through a gift, we would be truly grateful. For your convenience, you may use Venmo or Zelle below.",
+    "Above all, your presence and prayers mean the most to us!",
   ],
   giftParagraphsZh: [
-    "你的到来就是最好的礼物。请不必觉得还要再准备别的。",
-    "如果想送一点什么，我们会很开心，也完全随你的心意。我们喜欢有一点温度的礼物：可爱的、装饰性的、能让一个房间有家的感觉的东西，还有相机。我们还没有完全安定下来，所以一份为以后安家准备的红包，我们尤其感激。",
-    "无论你选择怎样和我们一起庆祝，只要你在，我们就很高兴。",
+    "若你愿意借着一份礼物表达爱与支持，我们会真心感激。为方便起见，你也可以使用下方的 Venmo 或 Zelle。",
+    "最重要的是，你的到来和代祷，对我们意义最大！",
   ],
-  payNote: "If you wish to send a red envelope, either of these is welcome.",
-  payNoteZh: "如果想送红包，下面任意一个都可以。",
+  payNote: "",
+  payNoteZh: "",
   payCodes: [
     { src: "/pay-venmo.jpg", alt: "Venmo QR code for Yian Yu", altZh: "俞易安的 Venmo 收款码", label: "Venmo" },
     { src: "/pay-zelle.jpg", alt: "Zelle QR code for Yian Yu", altZh: "俞易安的 Zelle 收款码", label: "Zelle" },
