@@ -199,7 +199,7 @@ function initialLang() {
   } catch {
     /* keep the default below */
   }
-  return navigator.language?.toLowerCase().startsWith("zh") ? "zh" : "en";
+  return "en";
 }
 
 export function LanguageProvider({ children }) {
