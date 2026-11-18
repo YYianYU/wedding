@@ -46,8 +46,6 @@ export const wedding = {
     "若你愿意借着一份礼物表达爱与支持，我们会真心感激。为方便起见，你也可以使用下方的 Venmo 或 Zelle。",
     "最重要的是，你的到来和代祷，对我们意义最大！",
   ],
-  payNote: "",
-  payNoteZh: "",
   payCodes: [
     { src: "/pay-venmo.jpg", alt: "Venmo QR code for Yian Yu", altZh: "俞易安的 Venmo 收款码", label: "Venmo" },
     { src: "/pay-zelle.jpg", alt: "Zelle QR code for Yian Yu", altZh: "俞易安的 Zelle 收款码", label: "Zelle" },
