@@ -1,25 +1,53 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Frame } from "../components/Frame.jsx";
 import { songs } from "../content.js";
 import { useI18n } from "../i18n.jsx";
+import { publicUrl } from "../publicUrl.js";
 
 export function Songs() {
   const { lang, t } = useI18n();
   const zh = lang === "zh";
+  const audioRef = useRef(null);
   const [activeId, setActiveId] = useState(songs[0]?.id ?? "");
-  const [started, setStarted] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const active = songs.find((song) => song.id === activeId) ?? songs[0];
 
-  const play = (id) => {
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !active) return;
+
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    const onEnded = () => setPlaying(false);
+
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("ended", onEnded);
+    return () => {
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, [active]);
+
+  const play = async (id) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (id === activeId) {
+      if (audio.paused) await audio.play().catch(() => {});
+      else audio.pause();
+      return;
+    }
+
     setActiveId(id);
-    setStarted(true);
+    audio.pause();
+    audio.src = publicUrl(songs.find((song) => song.id === id)?.src);
+    audio.load();
+    await audio.play().catch(() => {});
   };
 
   if (!active) return null;
-
-  const embedSrc = started
-    ? `https://www.youtube-nocookie.com/embed/${active.youtubeId}?rel=0&autoplay=1`
-    : `https://www.youtube-nocookie.com/embed/${active.youtubeId}?rel=0`;
 
   return (
     <Frame>
@@ -47,7 +75,7 @@ export function Songs() {
                       <strong>{zh ? song.titleZh : song.title}</strong>
                       <span>{zh ? song.artistZh : song.artist}</span>
                     </span>
-                    <span className="song-play">{selected && started ? t.nowPlaying : t.playSong}</span>
+                    <span className="song-play">{selected && playing ? t.nowPlaying : t.playSong}</span>
                   </button>
                 </li>
               );
@@ -59,17 +87,13 @@ export function Songs() {
               {zh ? active.titleZh : active.title}
               <span>{zh ? active.artistZh : active.artist}</span>
             </p>
-            <div className="song-frame">
-              <iframe
-                key={`${active.youtubeId}-${started ? "play" : "idle"}`}
-                title={zh ? active.titleZh : active.title}
-                src={embedSrc}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            </div>
+            <audio
+              ref={audioRef}
+              className="song-audio"
+              controls
+              preload="metadata"
+              src={publicUrl(active.src)}
+            />
           </div>
         </div>
       </section>

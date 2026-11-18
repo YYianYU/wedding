@@ -56,7 +56,7 @@ export const wedding = {
   ],
 };
 
-/** Ceremony songs guests can play on the site. youtubeId embeds the recording. */
+/** Ceremony songs. Put the MP3 files in public/songs/. */
 export const songs = [
   {
     id: "in-christ-alone",
@@ -64,7 +64,7 @@ export const songs = [
     titleZh: "唯独基督",
     artist: "Keith & Kristyn Getty, Alison Krauss",
     artistZh: "Keith & Kristyn Getty, Alison Krauss",
-    youtubeId: "16KYvfIc2bE",
+    src: "/songs/in-christ-alone.mp3",
   },
   {
     id: "great-is-thy-faithfulness",
@@ -72,7 +72,7 @@ export const songs = [
     titleZh: "你的信实广大",
     artist: "Chris Rice",
     artistZh: "Chris Rice",
-    youtubeId: "9V3_vymvBvk",
+    src: "/songs/great-is-thy-faithfulness.mp3",
   },
   {
     id: "whom-have-i-but-you",
@@ -80,7 +80,7 @@ export const songs = [
     titleZh: "除你以外",
     artist: "Stream of Praise",
     artistZh: "赞美之泉",
-    youtubeId: "YvETeAd6ctE",
+    src: "/songs/chu-ni-yi-wai.mp3",
   },
 ];
 
