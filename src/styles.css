@@ -497,6 +497,32 @@ input[type="file"] {
   font-size: 0.85rem;
 }
 
+.voice-field {
+  gap: 0.45rem;
+}
+
+.voice-hint {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.voice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.wish-audio {
+  display: block;
+  width: 100%;
+  margin-top: 0.55rem;
+}
+
+.wish-audio-status {
+  margin: 0.55rem 0 0;
+  font-size: 0.9rem;
+}
+
 .gift-methods,
 .link-list {
   display: grid;
