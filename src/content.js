@@ -56,6 +56,34 @@ export const wedding = {
   ],
 };
 
+/** Ceremony songs guests can play on the site. youtubeId embeds the recording. */
+export const songs = [
+  {
+    id: "in-christ-alone",
+    title: "In Christ Alone",
+    titleZh: "唯独基督",
+    artist: "Keith & Kristyn Getty, Alison Krauss",
+    artistZh: "Keith & Kristyn Getty, Alison Krauss",
+    youtubeId: "16KYvfIc2bE",
+  },
+  {
+    id: "great-is-thy-faithfulness",
+    title: "Great Is Thy Faithfulness",
+    titleZh: "你的信实广大",
+    artist: "Chris Rice",
+    artistZh: "Chris Rice",
+    youtubeId: "9V3_vymvBvk",
+  },
+  {
+    id: "whom-have-i-but-you",
+    title: "Whom Have I But You",
+    titleZh: "除你以外",
+    artist: "Stream of Praise",
+    artistZh: "赞美之泉",
+    youtubeId: "YvETeAd6ctE",
+  },
+];
+
 export const story = [
   {
     when: "November 2023",

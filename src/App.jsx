@@ -7,6 +7,7 @@ import { Wishes } from "./components/Wishes.jsx";
 import { Contents } from "./pages/Contents.jsx";
 import { Cover } from "./pages/Cover.jsx";
 import { Share } from "./pages/Share.jsx";
+import { Songs } from "./pages/Songs.jsx";
 import { Story } from "./pages/Story.jsx";
 import "./styles.css";
 
@@ -53,6 +54,7 @@ export default function App() {
         <Route path="/contents" element={<Contents />} />
         <Route path="/story" element={<Story />} />
         <Route path="/ceremony" element={<Ceremony />} />
+        <Route path="/songs" element={<Songs />} />
         <Route path="/gifts" element={<GiftsPage />} />
         <Route path="/registry" element={<Navigate to="/gifts" replace />} />
         <Route path="/future" element={<Navigate to="/gifts" replace />} />
