@@ -264,6 +264,11 @@ html[lang="zh-Hans"] .footer-names {
   color: var(--muted);
 }
 
+.cover-credit {
+  margin: 1.4rem 0 0;
+  font-size: 0.85rem;
+}
+
 .wrap {
   width: min(44rem, calc(100% - 3rem));
   margin: 0 auto;
@@ -573,6 +578,11 @@ input[type="file"] {
 
 .footer p {
   margin: 0.2rem 0;
+}
+
+.footer-credit {
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
 }
 
 .footer-names {

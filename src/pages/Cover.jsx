@@ -30,6 +30,7 @@ export function Cover() {
           {zh ? wedding.verseZh : wedding.verse}
           <cite>{zh ? wedding.verseRefZh : wedding.verseRef}</cite>
         </p>
+        <p className="quiet cover-credit">{t.designedBy}</p>
       </div>
     </section>
   );

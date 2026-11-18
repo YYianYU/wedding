@@ -56,7 +56,7 @@ export function Introduction() {
 }
 
 export function Footer() {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const zh = lang === "zh";
 
   return (
@@ -71,6 +71,7 @@ export function Footer() {
       </p>
       <p>{zh ? wedding.dateDisplayZh : wedding.dateDisplay}</p>
       <p className="quiet">{zh ? wedding.verseRefZh : wedding.verseRef}</p>
+      <p className="quiet footer-credit">{t.designedBy}</p>
     </footer>
   );
 }
