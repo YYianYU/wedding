@@ -1,39 +1,35 @@
-import { Link } from "react-router-dom";
 import { wedding } from "../content.js";
+import { SiteNav } from "../components/SiteNav.jsx";
+import { useI18n } from "../i18n.jsx";
 import { publicUrl } from "../publicUrl.js";
 
 export function Cover() {
+  const { lang, t } = useI18n();
+  const zh = lang === "zh";
+
   return (
     <section className="cover">
+      <SiteNav />
       <figure className="cover-photo">
-        <img src={publicUrl("/story/sustech-walk.jpg")} alt="Zhongxin and Yian walking hand in hand at SUSTech" />
+        <img
+          src={publicUrl("/story/sustech-walk-cover.jpg?v=3")}
+          width={3240}
+          height={2160}
+          alt={zh ? "仲鑫和易安在南科大手牵手散步" : "Zhongxin and Yian Yu walking hand in hand at SUSTech"}
+        />
       </figure>
       <div className="cover-copy">
-        <div className="cover-main">
-          <svg className="cross cover-cross" viewBox="0 0 24 40" aria-hidden="true">
-            <path d="M12 1.5v37M3.5 11.5h17" />
-          </svg>
-          <p className="kicker">The marriage of</p>
-          <h1>
-            <span>{wedding.partnerA}</span>
-            <em>&amp;</em>
-            <span>{wedding.partnerB}</span>
-          </h1>
-          <p className="cover-meta">
-            {wedding.weekday}, {wedding.dateDisplay}
-            <br />
-            {wedding.time}
-            <br />
-            {wedding.place}
-          </p>
-          <p className="cover-verse">
-            {wedding.verse}
-            <cite>{wedding.verseRef}</cite>
-          </p>
-        </div>
-        <Link className="enter" to="/contents">
-          Contents
-        </Link>
+        <h1>
+          <span>{zh ? wedding.partnerAZh : wedding.partnerA}</span>
+          <em>{t.connector}</em>
+          <span>{zh ? wedding.partnerBZh : wedding.partnerB}</span>
+        </h1>
+        <p className="cover-place">{zh ? wedding.cityZh : wedding.city}</p>
+        <p className="cover-place">{zh ? wedding.dateDisplayZh : wedding.dateDisplay}</p>
+        <p className="cover-verse">
+          {zh ? wedding.verseZh : wedding.verse}
+          <cite>{zh ? wedding.verseRefZh : wedding.verseRef}</cite>
+        </p>
       </div>
     </section>
   );

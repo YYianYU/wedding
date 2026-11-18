@@ -1,36 +1,47 @@
 import { Frame } from "../components/Frame.jsx";
 import { JourneyMap } from "../components/JourneyMap.jsx";
 import { story, wedding } from "../content.js";
+import { useI18n } from "../i18n.jsx";
 import { publicUrl } from "../publicUrl.js";
 
 export function Story() {
+  const { lang, t } = useI18n();
+  const zh = lang === "zh";
+
   return (
     <Frame>
       <section className="section">
         <div className="wrap story">
           <header className="section-h">
-            <h1>Our story</h1>
-            <p>In time and place</p>
+            <h1>{t.storyTitle}</h1>
+            <p>{t.storyKicker}</p>
           </header>
-          <p className="reading">
-            We met at SUSTech. The map follows us from Shenzhen to Jiangxi and Sichuan, and then across to Texas and Ann Arbor.
-          </p>
+          <p className="reading">{t.storyLead}</p>
           <JourneyMap />
           {story.map((chapter) => (
             <article className="chapter" key={`${chapter.when}-${chapter.place}`}>
               <header>
-                <p>{chapter.when}</p>
+                <p>{zh ? chapter.whenZh : chapter.when}</p>
                 <h2>
-                  {chapter.where}
-                  <span>{chapter.place}</span>
+                  {zh ? chapter.whereZh : chapter.where}
+                  {zh ? null : <span>{chapter.place}</span>}
                 </h2>
               </header>
-              <p>{chapter.text}</p>
-              {chapter.photos.length > 0 ? (
-                <div className={`chapter-photos count-${chapter.photos.length}${chapter.photos.some((photo) => photo.wide) ? " has-wide" : ""}`}>
-                  {chapter.photos.map((photo) => (
+              <p>{zh ? chapter.textZh : chapter.text}</p>
+              {chapter.photos.some((photo) => !photo.band) ? (
+                <div className={`chapter-photos count-${chapter.photos.filter((photo) => !photo.band).length}${chapter.photos.some((photo) => photo.wide) ? " has-wide" : ""}`}>
+                  {chapter.photos.filter((photo) => !photo.band).map((photo) => (
                     <figure key={photo.src} className={photo.wide ? "wide" : undefined}>
-                      <img className={photo.fit === "full" ? "full" : undefined} src={publicUrl(photo.src)} alt={photo.alt} />
+                      <img className={photo.fit === "full" ? "full" : undefined} src={publicUrl(photo.src)} alt={zh ? photo.altZh : photo.alt} />
+                    </figure>
+                  ))}
+                </div>
+              ) : null}
+              {chapter.photos.some((photo) => photo.band) ? (
+                <div className={`chapter-photos band count-${chapter.photos.filter((photo) => photo.band).length}`}>
+                  {chapter.photos.filter((photo) => photo.band).map((photo) => (
+                    <figure key={photo.src}>
+                      <img className={photo.fit === "full" ? "full" : undefined} src={publicUrl(photo.src)} alt={zh ? photo.altZh : photo.alt} />
                     </figure>
                   ))}
                 </div>
@@ -39,14 +50,20 @@ export function Story() {
           ))}
           <article className="chapter chapter-next">
             <header>
-              <p>{wedding.dateDisplay}</p>
+              <p>{zh ? wedding.dateDisplayZh : wedding.dateDisplay}</p>
               <h2>
-                {wedding.city}
-                <span>The wedding</span>
+                {zh ? wedding.cityZh : wedding.city}
+                <span>{t.weddingKicker}</span>
               </h2>
             </header>
             <p>
-              {wedding.weekday}, {wedding.time}, at {wedding.place}. Now our new life is beginning.
+              {zh ? wedding.weekdayZh : wedding.weekday}
+              {zh ? "" : ", "}
+              {zh ? wedding.timeZh : wedding.time}
+              {zh ? "，" : ", "}
+              {zh ? `在${wedding.placeZh}` : `at ${wedding.place}`}
+              {zh ? "。" : ". "}
+              {t.weddingClose}
             </p>
           </article>
         </div>

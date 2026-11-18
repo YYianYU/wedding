@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { wedding } from "../content.js";
+import { useEffect, useState } from "react";
+import { useI18n } from "../i18n.jsx";
+import { listWishes, sendWish, wishesReady } from "../wishes.js";
 
 const STORAGE_KEY = "chen-yu-wishes";
 
@@ -13,25 +14,42 @@ function loadWishes() {
   }
 }
 
-function formatWhen(iso) {
+function formatWhen(iso, lang) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return date.toLocaleDateString(lang === "zh" ? "zh-CN" : "en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
 export function Wishes() {
-  const [wishes, setWishes] = useState(() => loadWishes());
+  const { lang, t } = useI18n();
+  const shared = wishesReady();
+  const [wishes, setWishes] = useState(() => (shared ? [] : loadWishes()));
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (!shared) return undefined;
+    let cancelled = false;
+    listWishes()
+      .then((rows) => {
+        if (!cancelled) setWishes(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setError("sendFailed");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [shared]);
 
   async function onSubmit(event) {
     event.preventDefault();
     const trimmedName = name.trim();
     const trimmedMessage = message.trim();
     if (!trimmedName || !trimmedMessage) {
-      setError("Please leave your name and a note.");
+      setError("needBoth");
       return;
     }
 
@@ -46,22 +64,17 @@ export function Wishes() {
     setError("");
 
     try {
-      if (wedding.wishesEndpoint) {
-        const response = await fetch(wedding.wishesEndpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(wish),
-        });
-        if (!response.ok) throw new Error("request failed");
+      if (shared) {
+        setWishes(await sendWish(wish));
+      } else {
+        const next = [wish, ...wishes].slice(0, 80);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        setWishes(next);
       }
-
-      const next = [wish, ...wishes].slice(0, 80);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      setWishes(next);
       setName("");
       setMessage("");
     } catch {
-      setError("That didn't send. Please try again in a moment.");
+      setError("sendFailed");
     } finally {
       setSending(false);
     }
@@ -71,17 +84,15 @@ export function Wishes() {
     <section className="section tint" id="wishes">
       <div className="wrap narrow">
         <header className="section-h reveal">
-          <h1>Messages</h1>
-          <p>A word for us</p>
+          <h1>{t.messagesTitle}</h1>
+          <p>{t.messagesKicker}</p>
         </header>
-        <p className="lead reveal">Leave a blessing, a memory, or a hello. We will keep every one.</p>
-        {!wedding.wishesEndpoint ? (
-          <p className="preview-note reveal">Preview: notes stay in this browser until a shared inbox is connected.</p>
-        ) : null}
+        <p className="lead reveal">{t.messagesLead}</p>
+        <p className="preview-note reveal">{shared ? t.messagesShared : t.messagesPreview}</p>
 
         <form className="form" onSubmit={onSubmit} noValidate>
           <label className="field">
-            <span>Name</span>
+            <span>{t.name}</span>
             <input
               name="wish-name"
               value={name}
@@ -90,12 +101,12 @@ export function Wishes() {
                 setError("");
               }}
               autoComplete="name"
-              placeholder="Your name"
+              placeholder={t.namePlaceholder}
               aria-invalid={error && !name.trim() ? "true" : "false"}
             />
           </label>
           <label className="field">
-            <span>Message</span>
+            <span>{t.message}</span>
             <textarea
               name="wish-message"
               value={message}
@@ -105,17 +116,17 @@ export function Wishes() {
               }}
               maxLength={500}
               rows={4}
-              placeholder="A blessing, a memory, a hello"
+              placeholder={t.messagePlaceholder}
               aria-invalid={error && !message.trim() ? "true" : "false"}
             />
           </label>
           {error ? (
             <p className="form-error" role="alert">
-              {error}
+              {t[error]}
             </p>
           ) : null}
           <button className="btn solid" type="submit" disabled={sending}>
-            {sending ? "Sending…" : "Leave a message"}
+            {sending ? t.sending : t.leaveMessage}
           </button>
         </form>
 
@@ -125,7 +136,7 @@ export function Wishes() {
               <li key={wish.id} className="wish">
                 <h3>{wish.name}</h3>
                 <p>{wish.message}</p>
-                <time dateTime={wish.submittedAt}>{formatWhen(wish.submittedAt)}</time>
+                <time dateTime={wish.submittedAt}>{formatWhen(wish.submittedAt, lang)}</time>
               </li>
             ))}
           </ol>

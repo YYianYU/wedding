@@ -1,54 +1,37 @@
-import { useState } from "react";
 import { wedding } from "../content.js";
-
-function Method({ method }) {
-  const [copied, setCopied] = useState(false);
-
-  if (method.href) {
-    return (
-      <a className="gift-card" href={method.href} target="_blank" rel="noreferrer">
-        <span>{method.name}</span>
-        {method.detail ? <small>{method.detail}</small> : null}
-      </a>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      className="gift-card"
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(method.detail || method.name);
-          setCopied(true);
-        } catch {
-          setCopied(false);
-        }
-      }}
-    >
-      <span>{method.name}</span>
-      <small>{copied ? "Copied" : method.detail}</small>
-    </button>
-  );
-}
+import { useI18n } from "../i18n.jsx";
+import { publicUrl } from "../publicUrl.js";
 
 export function Gift() {
-  const methods = wedding.gifts ?? [];
+  const { lang, t } = useI18n();
+  const zh = lang === "zh";
+  const paragraphs = (zh ? wedding.giftParagraphsZh : wedding.giftParagraphs) ?? [];
+  const codes = wedding.payCodes ?? [];
 
   return (
-    <section className="section" id="gift">
+    <section className="section" id="gifts">
       <div className="wrap narrow">
-        <header className="section-h reveal">
-          <h1>Our future life</h1>
-          <p>A gift, if you wish</p>
+        <header className="section-h">
+          <h1>{t.giftsTitle}</h1>
+          <p>{t.giftsKicker}</p>
         </header>
-        <p className="reading reveal">{wedding.giftNote}</p>
-        {methods.length > 0 ? (
-          <div className="gift-methods reveal">
-            {methods.map((method) => (
-              <Method key={method.name} method={method} />
-            ))}
-          </div>
+        {paragraphs.map((paragraph) => (
+          <p className="reading" key={paragraph}>
+            {paragraph}
+          </p>
+        ))}
+        {codes.length > 0 ? (
+          <>
+            <p className="reading">{zh ? wedding.payNoteZh : wedding.payNote}</p>
+            <div className="pay-codes">
+              {codes.map((code) => (
+                <figure key={code.src}>
+                  <img src={publicUrl(code.src)} alt={zh ? code.altZh : code.alt} />
+                  <figcaption>{code.label}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </>
         ) : null}
       </div>
     </section>

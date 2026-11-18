@@ -1,14 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useI18n } from "../i18n.jsx";
+
+const chinaStops = [
+  { key: "sustech", at: [22.599, 113.997] },
+  { key: "wuyuan", at: [29.248, 117.862] },
+  { key: "bazhong", at: [31.868, 106.753] },
+];
 
 const china = {
-  title: "China",
-  stops: [
-    { name: "SUSTech", at: [22.599, 113.997] },
-    { name: "Wuyuan", at: [29.248, 117.862] },
-    { name: "Bazhong", at: [31.868, 106.753] },
-  ],
+  stops: chinaStops,
   path: [
     [22.599, 113.997],
     [29.248, 117.862],
@@ -18,12 +20,13 @@ const china = {
   ],
 };
 
+const americaStops = [
+  { key: "station", at: [30.628, -96.334] },
+  { key: "arbor", at: [42.281, -83.743] },
+];
+
 const america = {
-  title: "United States",
-  stops: [
-    { name: "College Station", at: [30.628, -96.334] },
-    { name: "Ann Arbor", at: [42.281, -83.743] },
-  ],
+  stops: americaStops,
   path: [
     [30.628, -96.334],
     [42.281, -83.743],
@@ -87,10 +90,24 @@ function Panel({ place }) {
 }
 
 export function JourneyMap() {
+  const { t } = useI18n();
+  const maps = useMemo(
+    () =>
+      [
+        { title: t.mapChina, ...china },
+        { title: t.mapUs, ...america },
+      ].map((place) => ({
+        ...place,
+        stops: place.stops.map((stop) => ({ ...stop, name: t.stops[stop.key] })),
+      })),
+    [t],
+  );
+
   return (
     <div className="atlas">
-      <Panel place={china} />
-      <Panel place={america} />
+      {maps.map((place) => (
+        <Panel key={place.title} place={place} />
+      ))}
     </div>
   );
 }

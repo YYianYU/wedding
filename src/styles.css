@@ -1,16 +1,16 @@
 :root {
-  --paper: #ffffff;
-  --ink: #1c1917;
-  --muted: #5e584f;
-  --gold: #9c8454;
-  --line: #e6dfd2;
-  --display: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
-  --body: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+  --paper: #f7f4ef;
+  --ink: #4e4e4e;
+  --muted: #6f6a64;
+  --gold: #4e4e4e;
+  --line: #e3ddd4;
+  --display: "Pinyon Script", cursive;
+  --body: "Libre Baskerville", Georgia, serif;
   color: var(--ink);
   background: var(--paper);
   font-family: var(--body);
-  font-size: 17px;
-  line-height: 1.65;
+  font-size: 16px;
+  line-height: 1.7;
   font-weight: 400;
 }
 
@@ -21,6 +21,8 @@
 body {
   margin: 0;
   background: var(--paper);
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-weight: 400;
 }
 
 img {
@@ -41,9 +43,134 @@ textarea {
 
 .cover {
   min-height: 100dvh;
-  display: grid;
-  grid-template-rows: minmax(17rem, 48vh) auto;
+  background: var(--paper);
+}
+
+.mast {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 1.35rem 1rem 0.85rem;
+  background: var(--paper);
+  text-align: center;
+}
+
+.wordmark {
+  font-family: "Pinyon Script", cursive;
+  font-weight: 400;
+  font-size: 2.625rem;
+  line-height: 1.15;
+  text-decoration: none;
+}
+
+.mast-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 0.55rem;
+  padding-bottom: 0.15rem;
+}
+
+.mast-nav a {
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.3;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.35rem;
+  padding: 0.3rem 0.95rem;
+  border: 1px solid #c8bfb4;
+  border-radius: 999px;
   background: #fff;
+}
+
+.mast-nav a:hover {
+  border-color: var(--ink);
+}
+
+.mast-nav a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.mast-nav a.is-active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.lang-switch {
+  position: absolute;
+  top: 0.85rem;
+  right: 1rem;
+  display: inline-flex;
+  margin: 0;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.lang-switch button {
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.85rem;
+  background: transparent;
+  border: 0;
+  padding: 0.32rem 0.8rem;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.lang-switch button + button {
+  border-left: 1px solid var(--ink);
+}
+
+.lang-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.lang-switch button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (max-width: 719px) {
+  .mast {
+    padding-top: 3.8rem;
+  }
+}
+
+html[lang="zh-Hans"] body,
+html[lang="zh-Hans"] .mast-nav a,
+html[lang="zh-Hans"] .lang-switch button,
+html[lang="zh-Hans"] .cover h1 em,
+html[lang="zh-Hans"] .cover-place,
+html[lang="zh-Hans"] .cover-verse,
+html[lang="zh-Hans"] .section-h p,
+html[lang="zh-Hans"] .chapter h2,
+html[lang="zh-Hans"] .chapter h2 span,
+html[lang="zh-Hans"] .footer-names em,
+html[lang="zh-Hans"] .btn,
+html[lang="zh-Hans"] .facts dt,
+html[lang="zh-Hans"] .field span,
+html[lang="zh-Hans"] .toc strong,
+html[lang="zh-Hans"] .toc .num,
+html[lang="zh-Hans"] .wish h3,
+html[lang="zh-Hans"] .pay-codes figcaption,
+html[lang="zh-Hans"] .leaflet-tooltip.map-label {
+  font-family: "Noto Serif SC", "Songti SC", "Libre Baskerville", serif;
+}
+
+html[lang="zh-Hans"] .wordmark,
+html[lang="zh-Hans"] .cover h1,
+html[lang="zh-Hans"] .section-h h1,
+html[lang="zh-Hans"] .footer-names {
+  font-family: "Ma Shan Zheng", cursive;
 }
 
 .cover-photo,
@@ -83,32 +210,20 @@ textarea {
   width: min(40rem, 100%);
 }
 
+.cover-photo {
+  height: min(68vh, 40rem);
+}
+
 .page-photo {
   height: min(42vh, 24rem);
 }
 
-.cover-cross {
-  width: 18px;
-  height: 32px;
-  margin-bottom: 1.6rem;
-}
-
-.kicker {
-  margin: 0 0 1.35rem;
-  color: var(--gold);
-  font-weight: 600;
-  font-size: 0.78rem;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-}
-
 .cover h1 {
   margin: 0;
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(2.8rem, 8vw, 5.6rem);
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  font-family: "Pinyon Script", cursive;
+  font-weight: 400;
+  font-size: 3.5rem;
+  line-height: 1.2;
 }
 
 .cover h1 span {
@@ -117,82 +232,36 @@ textarea {
 
 .cover h1 em {
   display: block;
-  margin: 0.16em 0;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 0.42em;
-  line-height: 1;
-  color: var(--gold);
+  margin: 0.15rem 0;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4;
 }
 
-.cover-meta {
-  margin: 2.4rem 0 0;
-  color: var(--ink);
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
-  line-height: 1.7;
+.cover-place {
+  margin: 0.35rem 0 0;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.6;
 }
 
 .cover-verse {
-  margin: 1.8rem 0 0;
+  margin: 1.6rem 0 0;
   max-width: 28rem;
-  font-family: var(--display);
-  font-style: normal;
-  font-weight: 400;
-  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
-  line-height: 1.45;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .cover-verse cite {
   display: block;
-  margin-top: 0.45rem;
-  font-family: var(--body);
+  margin-top: 0.35rem;
   font-style: normal;
-  font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.enter {
-  margin-top: 2.5rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  text-decoration: none;
-  border-bottom: 1px solid var(--gold);
-  padding-bottom: 0.2rem;
-}
-
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 1.15rem 1.75rem;
-  background: #fff;
-  border-bottom: 1px solid var(--line);
-}
-
-.brand {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 1.4rem;
-  letter-spacing: -0.02em;
-  text-decoration: none;
-}
-
-.contents-link {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--gold);
+  font-size: 0.82rem;
+  color: var(--muted);
 }
 
 .wrap {
@@ -204,22 +273,23 @@ textarea {
   padding: 4rem 0 1.25rem;
 }
 
+.section-h {
+  text-align: center;
+}
+
 .section-h h1 {
   margin: 0;
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(3.1rem, 7vw, 5.2rem);
-  letter-spacing: -0.035em;
-  line-height: 1;
+  font-family: "Pinyon Script", cursive;
+  font-weight: 400;
+  font-size: 2.5rem;
+  line-height: 1.3;
 }
 
 .section-h p {
-  margin: 0.45rem 0 0;
-  color: var(--gold);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 0.75rem;
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 1rem;
 }
 
 .reading,
@@ -248,15 +318,25 @@ textarea {
 }
 
 .facts dt {
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold);
-  font-weight: 600;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
 }
 
 .facts dd {
   margin: 0.2rem 0 0;
+}
+
+.contact-line {
+  display: block;
+}
+
+.contact-line a {
+  color: inherit;
 }
 
 .text-link {
@@ -293,18 +373,20 @@ textarea {
 }
 
 .toc .num {
-  font-family: var(--display);
-  color: var(--gold);
-  font-size: 1.35rem;
-  padding-top: 0.35rem;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 1rem;
+  padding-top: 0.55rem;
 }
 
 .toc strong {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(2rem, 4.2vw, 2.8rem);
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-weight: 400;
+  font-size: 1.65rem;
+  letter-spacing: 0;
+  line-height: 1.4;
 }
 
 .toc em {
@@ -325,10 +407,12 @@ textarea {
 }
 
 .field span {
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 600;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--muted);
 }
 
@@ -358,13 +442,14 @@ input[type="file"] {
 }
 
 .btn {
+  display: inline-block;
   justify-self: start;
-  font-weight: 600;
-  background: var(--ink);
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.25rem;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 0.7rem 1.2rem;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .btn:disabled {
@@ -392,9 +477,10 @@ input[type="file"] {
 
 .wish h3 {
   margin: 0;
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 1.35rem;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.4;
 }
 
 .wish p {
@@ -433,6 +519,41 @@ input[type="file"] {
   color: var(--muted);
 }
 
+.pay-codes {
+  display: grid;
+  gap: 1.4rem;
+  margin-top: 1.6rem;
+}
+
+.pay-codes figure {
+  margin: 0;
+}
+
+.pay-codes img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+}
+
+.pay-codes figcaption {
+  margin-top: 0.55rem;
+  text-align: center;
+  font-family: "Libre Baskerville", Georgia, serif;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.4;
+}
+
+@media (min-width: 720px) {
+  .pay-codes {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
 .back {
   width: min(44rem, calc(100% - 3rem));
   margin: 1.5rem auto 2.5rem;
@@ -455,15 +576,18 @@ input[type="file"] {
 }
 
 .footer-names {
-  font-family: var(--display);
+  font-family: "Pinyon Script", cursive;
+  font-weight: 400;
   color: var(--ink);
-  font-size: 1.7rem;
+  font-size: 2.5rem;
+  line-height: 1.3;
 }
 
 .footer-names em {
-  font-style: normal;
-  font-weight: 300;
-  color: var(--gold);
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1rem;
 }
 
 .cross {
@@ -537,31 +661,34 @@ input[type="file"] {
   border-top: 1px solid var(--line);
 }
 
+.chapter header {
+  text-align: center;
+}
+
 .chapter header p {
   margin: 0;
-  color: var(--gold);
-  font-weight: 500;
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.95rem;
 }
 
 .chapter h2 {
-  margin: 0.35rem 0 0;
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  margin: 0.15rem 0 0;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-weight: 400;
+  font-size: 1.65rem;
+  line-height: 1.4;
 }
 
 .chapter h2 span {
   display: block;
-  margin-top: 0.25rem;
+  margin-top: 0.15rem;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 
 .chapter > p {
@@ -577,6 +704,10 @@ input[type="file"] {
 
 .chapter-photos.count-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.chapter-photos.band.count-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .chapter-photos.count-3,
@@ -622,11 +753,9 @@ input[type="file"] {
 
 .map-panel figcaption {
   margin-bottom: 0.4rem;
-  color: var(--gold);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-style: italic;
 }
 
 .map-canvas {
@@ -654,9 +783,9 @@ input[type="file"] {
   background: #fff;
   box-shadow: none;
   color: var(--ink);
-  font-family: var(--body);
+  font-family: "Libre Baskerville", Georgia, serif;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .leaflet-tooltip.map-label::before {
@@ -678,24 +807,7 @@ input[type="file"] {
 }
 
 @media (min-width: 960px) {
-  .cover {
-    grid-template-rows: none;
-    grid-template-columns: minmax(24rem, 1.05fr) 0.95fr;
-    min-height: 100dvh;
-  }
-
   .cover-photo {
-    height: 100dvh;
-    position: sticky;
-    top: 0;
-  }
-
-  .cover-copy {
-    min-height: 100dvh;
-    padding: 3rem 3.2rem;
-  }
-
-  .cover h1 {
-    font-size: clamp(3.2rem, 4.4vw, 5.8rem);
+    height: min(72vh, 44rem);
   }
 }

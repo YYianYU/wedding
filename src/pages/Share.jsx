@@ -1,46 +1,18 @@
 import { useEffect, useState } from "react";
+import { albumReady, listAlbum, uploadAlbumPhoto } from "../album.js";
 import { Frame } from "../components/Frame.jsx";
-import { compressImage, deletePhoto, listPhotos, savePhoto } from "../photoStore.js";
-
-function useAlbum(version) {
-  const [photos, setPhotos] = useState([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const urls = [];
-
-    listPhotos()
-      .then((rows) => {
-        const ready = rows.map((row) => {
-          const url = URL.createObjectURL(row.blob);
-          urls.push(url);
-          return { id: row.id, name: row.name, createdAt: row.createdAt, url };
-        });
-        if (cancelled) {
-          urls.splice(0).forEach((url) => URL.revokeObjectURL(url));
-          return;
-        }
-        setPhotos(ready);
-      })
-      .catch(() => {
-        if (!cancelled) setPhotos([]);
-      });
-
-    return () => {
-      cancelled = true;
-      urls.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [version]);
-
-  return photos;
-}
+import { wedding } from "../content.js";
+import { useI18n } from "../i18n.jsx";
+import { compressImage } from "../photoStore.js";
 
 export function Share() {
-  const [version, setVersion] = useState(0);
-  const photos = useAlbum(version);
+  const { t } = useI18n();
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(albumReady());
   const [name, setName] = useState("");
   const [picked, setPicked] = useState([]);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -49,52 +21,66 @@ export function Share() {
     };
   }, [picked]);
 
+  useEffect(() => {
+    if (!albumReady()) return undefined;
+    let cancelled = false;
+    listAlbum()
+      .then((rows) => {
+        if (!cancelled) setPhotos(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setError("albumClosed");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [saved]);
+
   function onPick(event) {
     const files = [...event.target.files].filter((file) => file.type.startsWith("image/")).slice(0, 8);
     setPicked((current) => {
       current.forEach((item) => URL.revokeObjectURL(item.url));
       return files.map((file) => ({ file, url: URL.createObjectURL(file) }));
     });
-    setError(files.length ? "" : "Please choose a JPG or PNG.");
+    setSaved(false);
+    setError(files.length ? "" : "chooseImage");
     event.target.value = "";
   }
 
   async function onSubmit(event) {
     event.preventDefault();
+    if (!albumReady()) {
+      setError("albumOffline");
+      return;
+    }
     if (picked.length === 0) {
-      setError("Choose one or more photos first.");
+      setError("chooseFirst");
       return;
     }
 
     setSaving(true);
     setError("");
-    const guest = name.trim() || "Guest";
+    setSaved(false);
+    const guest = name.trim() || t.guest;
 
     try {
       for (const item of picked) {
         const blob = await compressImage(item.file);
-        await savePhoto({
-          id: crypto.randomUUID(),
-          name: guest,
-          createdAt: new Date().toISOString(),
-          blob,
-        });
+        await uploadAlbumPhoto({ name: guest, blob });
       }
       setPicked((current) => {
         current.forEach((item) => URL.revokeObjectURL(item.url));
         return [];
       });
-      setVersion((value) => value + 1);
+      setSaved(true);
     } catch {
-      setError("That picture couldn't be added. Try a JPG or PNG.");
+      setError("saveFailed");
     } finally {
       setSaving(false);
     }
-  }
-
-  async function onRemove(id) {
-    await deletePhoto(id);
-    setVersion((value) => value + 1);
   }
 
   return (
@@ -102,28 +88,31 @@ export function Share() {
       <section className="section">
         <div className="wrap narrow">
           <header className="section-h">
-            <h1>Share photos</h1>
-            <p>From the day</p>
+            <h1>{t.photosTitle}</h1>
+            <p>{t.photosKicker}</p>
           </header>
-          <p className="reading">
-            Add a picture you took. We would love to see the day through your eyes.
-          </p>
-          <p className="preview-note">
-            Photos stay on this phone or computer until a shared album is connected.
-          </p>
+          <p className="reading">{t.photosLead}</p>
+          {albumReady() ? (
+            <p className="preview-note">
+              <a className="text-link" href={wedding.albumUrl} target="_blank" rel="noreferrer">
+                {t.openAlbum}
+              </a>
+            </p>
+          ) : null}
 
+          {albumReady() ? (
           <form className="form" onSubmit={onSubmit}>
             <label className="field">
-              <span>Your name</span>
+              <span>{t.yourName}</span>
               <input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 autoComplete="name"
-                placeholder="Optional"
+                placeholder={t.optional}
               />
             </label>
             <label className="field">
-              <span>Photos</span>
+              <span>{t.photos}</span>
               <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={onPick} />
             </label>
             {picked.length > 0 ? (
@@ -137,33 +126,38 @@ export function Share() {
             ) : null}
             {error ? (
               <p className="form-error" role="alert">
-                {error}
+                {t[error]}
               </p>
             ) : null}
+            {saved ? <p className="preview-note">{t.saved}</p> : null}
             <button className="btn" type="submit" disabled={saving}>
-              {saving ? "Adding…" : "Add to the album"}
+              {saving ? t.saving : t.addAlbum}
             </button>
           </form>
+          ) : (
+            <p>
+              <a className="btn" href={wedding.albumUrl} target="_blank" rel="noreferrer">
+                {t.addAlbum}
+              </a>
+            </p>
+          )}
 
-          {photos.length > 0 ? (
+          {loading ? <p className="quiet album-empty">{t.opening}</p> : null}
+          {!loading && photos.length > 0 ? (
             <ul className="album">
               {photos.map((photo) => (
                 <li key={photo.id}>
                   <figure>
-                    <img src={photo.url} alt={`Photo shared by ${photo.name}`} />
-                    <figcaption>
-                      {photo.name}
-                      <button className="remove" type="button" onClick={() => onRemove(photo.id)}>
-                        Remove
-                      </button>
-                    </figcaption>
+                    <img src={photo.url} alt={photo.name ? `${t.photoBy} ${photo.name}` : t.albumPhoto} />
+                    {photo.name ? <figcaption>{photo.name}</figcaption> : null}
                   </figure>
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="quiet album-empty">No photos yet. Yours can be the first.</p>
-          )}
+          ) : null}
+          {!loading && albumReady() && photos.length === 0 ? (
+            <p className="quiet album-empty">{t.emptyAlbum}</p>
+          ) : null}
         </div>
       </section>
     </Frame>

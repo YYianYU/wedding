@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { wedding } from "./content.js";
 import { Frame } from "./components/Frame.jsx";
 import { Gift } from "./components/Gift.jsx";
-import { Introduction, Registry } from "./components/Sections.jsx";
+import { Introduction } from "./components/Sections.jsx";
 import { Wishes } from "./components/Wishes.jsx";
 import { Contents } from "./pages/Contents.jsx";
 import { Cover } from "./pages/Cover.jsx";
@@ -29,15 +28,7 @@ function Ceremony() {
   );
 }
 
-function RegistryPage() {
-  return (
-    <Frame>
-      <Registry />
-    </Frame>
-  );
-}
-
-function FuturePage() {
+function GiftsPage() {
   return (
     <Frame>
       <Gift />
@@ -54,10 +45,6 @@ function MessagesPage() {
 }
 
 export default function App() {
-  useEffect(() => {
-    document.title = `${wedding.partnerA} & ${wedding.partnerB}`;
-  }, []);
-
   return (
     <BrowserRouter basename={basename}>
       <ScrollTop />
@@ -66,8 +53,9 @@ export default function App() {
         <Route path="/contents" element={<Contents />} />
         <Route path="/story" element={<Story />} />
         <Route path="/ceremony" element={<Ceremony />} />
-        <Route path="/registry" element={<RegistryPage />} />
-        <Route path="/future" element={<FuturePage />} />
+        <Route path="/gifts" element={<GiftsPage />} />
+        <Route path="/registry" element={<Navigate to="/gifts" replace />} />
+        <Route path="/future" element={<Navigate to="/gifts" replace />} />
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/photos" element={<Share />} />
         <Route path="*" element={<Navigate to="/" replace />} />
