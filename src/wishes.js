@@ -47,7 +47,10 @@ export async function sendWish({ name, message, audioBlob }) {
   });
   const payload = await response.json();
   if (!payload.ok) throw new Error(payload.error || "send");
-  return Array.isArray(payload.wishes) ? payload.wishes : [];
+  return {
+    wishes: Array.isArray(payload.wishes) ? payload.wishes : [],
+    pending: Boolean(payload.pending),
+  };
 }
 
 export async function loadWishAudio(audioUrl) {

@@ -55,6 +55,7 @@ export function Wishes() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+  const [pendingNote, setPendingNote] = useState(false);
   const [recording, setRecording] = useState(false);
   const [recordMs, setRecordMs] = useState(0);
   const [audioBlob, setAudioBlob] = useState(null);
@@ -162,10 +163,13 @@ export function Wishes() {
 
     setSending(true);
     setError("");
+    setPendingNote(false);
 
     try {
       if (shared) {
-        setWishes(await sendWish({ name: trimmedName, message: trimmedMessage, audioBlob }));
+        const result = await sendWish({ name: trimmedName, message: trimmedMessage, audioBlob });
+        setWishes(result.wishes);
+        setPendingNote(Boolean(result.pending));
       } else {
         const wish = {
           id: crypto.randomUUID(),
@@ -197,6 +201,11 @@ export function Wishes() {
         </header>
         <p className="lead reveal">{t.messagesLead}</p>
         <p className="preview-note reveal">{shared ? t.messagesShared : t.messagesPreview}</p>
+        {pendingNote ? (
+          <p className="preview-note reveal" role="status">
+            {t.messagesPending}
+          </p>
+        ) : null}
 
         <form className="form" onSubmit={onSubmit} noValidate>
           <label className="field">

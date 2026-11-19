@@ -2,6 +2,7 @@
  * Facts, photos, and the story in both languages.
  * albumEndpoint is the Google Apps Script web app that saves guest photos.
  * wishesEndpoint is the deployed guestbook web app. Messages are stored in Drive.
+ * New guestbook notes stay private until approved in the Apps Script review page.
  */
 export const wedding = {
   partnerA: "Zhongxin Chen",
