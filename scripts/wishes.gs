@@ -4,8 +4,9 @@
  * https://drive.google.com/drive/folders/1Lpv9Yhi3nHY5k8YoH9HBSD3X_5SBoQkH
  *
  * New notes stay hidden until you approve them.
- * Review page (keep this key private):
- *   YOUR_EXEC_URL?key=REVIEW_KEY
+ * Easiest review page (on the wedding site):
+ *   https://yyianyu.github.io/wedding/review
+ * Key: REVIEW_KEY below
  *
  * Deploy: Deploy → Manage deployments → Edit → New version → Deploy
  * Execute as: Me · Who has access: Anyone
@@ -16,17 +17,18 @@ var MAX_AUDIO_BYTES = 2 * 1024 * 1024;
 /** Private review key — change it anytime, then redeploy. */
 var REVIEW_KEY = "chen-yu-wish-review-2026";
 var NOTIFY_TO = "yianyu@umich.edu,czxyian@gmail.com";
+var SITE_REVIEW_URL = "https://yyianyu.github.io/wedding/review";
 
 function doGet(e) {
   try {
     var params = (e && e.parameter) || {};
     if (params.audio) {
-      return serveAudio_(String(params.audio));
+      return serveAudio_(String(params.audio), params.key);
     }
     if (params.key && String(params.key) === REVIEW_KEY) {
       return reviewPage_(params);
     }
-    return json({ ok: true, wishes: decorate_(publicOnly_(read_())) });
+    return json({ ok: true, wishes: decorate_(publicOnly_(read_()), false) });
   } catch (error) {
     return json({ ok: false, error: String(error) });
   }
@@ -65,7 +67,7 @@ function doPost(e) {
     return json({
       ok: true,
       pending: true,
-      wishes: decorate_(publicOnly_(wishes)),
+      wishes: decorate_(publicOnly_(wishes), false),
     });
   } catch (error) {
     return json({ ok: false, error: String(error) });
@@ -104,8 +106,17 @@ function reviewPage_(params) {
       return wish.approved === false;
     });
     var approved = publicOnly_(wishes);
-    var base = ScriptApp.getService().getUrl() + "?key=" + encodeURIComponent(REVIEW_KEY);
 
+    if (String(params.format || "") === "json") {
+      return json({
+        ok: true,
+        notice: notice,
+        pending: decorate_(pending, true),
+        publicCount: approved.length,
+      });
+    }
+
+    var base = ScriptApp.getService().getUrl() + "?key=" + encodeURIComponent(REVIEW_KEY);
     var html = [];
     html.push("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>");
     html.push("<title>Wedding messages review</title>");
@@ -114,6 +125,7 @@ function reviewPage_(params) {
     html.push("a.btn{display:inline-block;margin:0 .6rem .4rem 0;padding:.45rem .8rem;border:1px solid #333;text-decoration:none;color:#333}");
     html.push(".ok{color:#2f6b3a}.empty{color:#777}</style></head><body>");
     html.push("<h1>Review messages</h1>");
+    html.push("<p class='meta'>Prefer the site page: <a href='" + escapeHtml_(SITE_REVIEW_URL) + "'>" + escapeHtml_(SITE_REVIEW_URL) + "</a></p>");
     if (notice) html.push("<p class='ok'>" + escapeHtml_(notice) + "</p>");
     html.push("<p class='meta'>Pending: " + pending.length + " · Public: " + approved.length + "</p>");
 
@@ -125,7 +137,11 @@ function reviewPage_(params) {
         html.push("<strong>" + escapeHtml_(wish.name) + "</strong>");
         html.push("<p>" + escapeHtml_(wish.message || "(voice note only)") + "</p>");
         if (wish.audioId) {
-          html.push("<p class='meta'><a href='" + escapeHtml_(ScriptApp.getService().getUrl() + "?audio=" + encodeURIComponent(wish.audioId)) + "' target='_blank' rel='noreferrer'>Open voice note</a></p>");
+          html.push(
+            "<p class='meta'><a href='" +
+              escapeHtml_(ScriptApp.getService().getUrl() + "?audio=" + encodeURIComponent(wish.audioId) + "&key=" + encodeURIComponent(REVIEW_KEY)) +
+              "' target='_blank' rel='noreferrer'>Open voice note</a></p>",
+          );
         }
         html.push("<p class='meta'>" + escapeHtml_(wish.submittedAt || "") + "</p>");
         html.push("<p>");
@@ -136,7 +152,8 @@ function reviewPage_(params) {
     }
 
     html.push("</body></html>");
-    return HtmlService.createHtmlOutput(html.join("")).setTitle("Wedding messages review");
+    /* ContentService HTML opens reliably; HtmlService often shows a blank page on Workspace accounts. */
+    return ContentService.createTextOutput(html.join("")).setMimeType(ContentService.MimeType.HTML);
   } finally {
     lock.releaseLock();
   }
@@ -144,7 +161,6 @@ function reviewPage_(params) {
 
 function notifyPending_(wish) {
   try {
-    var reviewUrl = ScriptApp.getService().getUrl() + "?key=" + encodeURIComponent(REVIEW_KEY);
     var body = [
       "A new wedding guestbook note is waiting for review.",
       "",
@@ -152,8 +168,9 @@ function notifyPending_(wish) {
       "Message: " + (wish.message || "(voice note only)"),
       "When: " + wish.submittedAt,
       "",
-      "Review and approve here:",
-      reviewUrl,
+      "Open the review page:",
+      SITE_REVIEW_URL,
+      "Review key: " + REVIEW_KEY,
     ].join("\n");
     MailApp.sendEmail({
       to: NOTIFY_TO,
@@ -211,7 +228,7 @@ function saveAudio_(data, mimeType, guest) {
   return file.getId();
 }
 
-function serveAudio_(id) {
+function serveAudio_(id, key) {
   var wishes = read_();
   var match = null;
   for (var i = 0; i < wishes.length; i += 1) {
@@ -220,7 +237,8 @@ function serveAudio_(id) {
       break;
     }
   }
-  if (!match || match.approved === false) throw new Error("not found");
+  var reviewer = key && String(key) === REVIEW_KEY;
+  if (!match || (match.approved === false && !reviewer)) throw new Error("not found");
 
   var file = DriveApp.getFileById(id);
   var blob = file.getBlob();
@@ -231,7 +249,7 @@ function serveAudio_(id) {
   });
 }
 
-function decorate_(wishes) {
+function decorate_(wishes, forReview) {
   var base = ScriptApp.getService().getUrl();
   return wishes.map(function (wish) {
     var row = {
@@ -242,7 +260,11 @@ function decorate_(wishes) {
     };
     if (wish.audioId) {
       row.audioId = wish.audioId;
-      row.audioUrl = base + "?audio=" + encodeURIComponent(wish.audioId);
+      row.audioUrl =
+        base +
+        "?audio=" +
+        encodeURIComponent(wish.audioId) +
+        (forReview ? "&key=" + encodeURIComponent(REVIEW_KEY) : "");
     }
     return row;
   });

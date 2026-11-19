@@ -62,3 +62,36 @@ export async function loadWishAudio(audioUrl) {
   for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
   return URL.createObjectURL(new Blob([bytes], { type: payload.mimeType || "audio/webm" }));
 }
+
+function reviewUrl(key, extra = {}) {
+  const url = new URL(endpoint());
+  url.searchParams.set("key", key);
+  url.searchParams.set("format", "json");
+  Object.entries(extra).forEach(([name, value]) => {
+    if (value) url.searchParams.set(name, value);
+  });
+  return url.toString();
+}
+
+export async function listPendingWishes(key) {
+  const response = await fetch(reviewUrl(key));
+  const payload = await response.json();
+  if (!payload.ok) throw new Error(payload.error || "review");
+  return {
+    pending: Array.isArray(payload.pending) ? payload.pending : [],
+    publicCount: Number(payload.publicCount) || 0,
+    notice: payload.notice || "",
+  };
+}
+
+export async function reviewWish({ key, id, action }) {
+  const extra = action === "reject" ? { reject: id } : { approve: id };
+  const response = await fetch(reviewUrl(key, extra));
+  const payload = await response.json();
+  if (!payload.ok) throw new Error(payload.error || "review");
+  return {
+    pending: Array.isArray(payload.pending) ? payload.pending : [],
+    publicCount: Number(payload.publicCount) || 0,
+    notice: payload.notice || "",
+  };
+}

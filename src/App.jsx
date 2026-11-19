@@ -6,6 +6,7 @@ import { Introduction } from "./components/Sections.jsx";
 import { Wishes } from "./components/Wishes.jsx";
 import { Contents } from "./pages/Contents.jsx";
 import { Cover } from "./pages/Cover.jsx";
+import { Review } from "./pages/Review.jsx";
 import { Share } from "./pages/Share.jsx";
 import { Story } from "./pages/Story.jsx";
 import { MusicProvider } from "./music.jsx";
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="/future" element={<Navigate to="/gifts" replace />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/photos" element={<Share />} />
+          <Route path="/review" element={<Review />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </MusicProvider>
