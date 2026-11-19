@@ -6,7 +6,10 @@
  * New notes stay hidden until you approve them.
  * Easiest review page (on the wedding site):
  *   https://yyianyu.github.io/wedding/review
- * Key: REVIEW_KEY below
+ *
+ * Store the private key in Apps Script → Project Settings → Script properties:
+ *   Property: REVIEW_KEY
+ * Never commit the real key to GitHub.
  *
  * Deploy: Deploy → Manage deployments → Edit → New version → Deploy
  * Execute as: Me · Who has access: Anyone
@@ -14,10 +17,13 @@
 var FOLDER_ID = "1Lpv9Yhi3nHY5k8YoH9HBSD3X_5SBoQkH";
 var FILE_NAME = "messages.json";
 var MAX_AUDIO_BYTES = 2 * 1024 * 1024;
-/** Private review key — change it anytime, then redeploy. */
-var REVIEW_KEY = "chen-yu-wish-review-2026";
 var NOTIFY_TO = "yianyu@umich.edu,czxyian@gmail.com";
 var SITE_REVIEW_URL = "https://yyianyu.github.io/wedding/review";
+
+function getReviewKey_() {
+  var key = PropertiesService.getScriptProperties().getProperty("REVIEW_KEY");
+  return key ? String(key) : "";
+}
 
 function doGet(e) {
   try {
@@ -25,7 +31,8 @@ function doGet(e) {
     if (params.audio) {
       return serveAudio_(String(params.audio), params.key);
     }
-    if (params.key && String(params.key) === REVIEW_KEY) {
+    var reviewKey = getReviewKey_();
+    if (reviewKey && params.key && String(params.key) === reviewKey) {
       return reviewPage_(params);
     }
     return json({ ok: true, wishes: decorate_(publicOnly_(read_()), false) });
@@ -116,7 +123,8 @@ function reviewPage_(params) {
       });
     }
 
-    var base = ScriptApp.getService().getUrl() + "?key=" + encodeURIComponent(REVIEW_KEY);
+    var reviewKey = getReviewKey_();
+    var base = ScriptApp.getService().getUrl() + "?key=" + encodeURIComponent(reviewKey);
     var html = [];
     html.push("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>");
     html.push("<title>Wedding messages review</title>");
@@ -139,7 +147,7 @@ function reviewPage_(params) {
         if (wish.audioId) {
           html.push(
             "<p class='meta'><a href='" +
-              escapeHtml_(ScriptApp.getService().getUrl() + "?audio=" + encodeURIComponent(wish.audioId) + "&key=" + encodeURIComponent(REVIEW_KEY)) +
+              escapeHtml_(ScriptApp.getService().getUrl() + "?audio=" + encodeURIComponent(wish.audioId) + "&key=" + encodeURIComponent(reviewKey)) +
               "' target='_blank' rel='noreferrer'>Open voice note</a></p>",
           );
         }
@@ -170,7 +178,7 @@ function notifyPending_(wish) {
       "",
       "Open the review page:",
       SITE_REVIEW_URL,
-      "Review key: " + REVIEW_KEY,
+      "(Use the private REVIEW_KEY from Apps Script properties.)",
     ].join("\n");
     MailApp.sendEmail({
       to: NOTIFY_TO,
@@ -237,7 +245,8 @@ function serveAudio_(id, key) {
       break;
     }
   }
-  var reviewer = key && String(key) === REVIEW_KEY;
+  var reviewKey = getReviewKey_();
+  var reviewer = reviewKey && key && String(key) === reviewKey;
   if (!match || (match.approved === false && !reviewer)) throw new Error("not found");
 
   var file = DriveApp.getFileById(id);
@@ -264,7 +273,7 @@ function decorate_(wishes, forReview) {
         base +
         "?audio=" +
         encodeURIComponent(wish.audioId) +
-        (forReview ? "&key=" + encodeURIComponent(REVIEW_KEY) : "");
+        (forReview ? "&key=" + encodeURIComponent(getReviewKey_()) : "");
     }
     return row;
   });

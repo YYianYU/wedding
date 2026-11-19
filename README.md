@@ -8,13 +8,10 @@
 | 留言审核页（私密） | https://yyianyu.github.io/wedding/review |
 | GitHub 仓库 | https://github.com/YYianYU/wedding |
 
-审核页密钥（不要公开分享）：
+审核密钥保存在 Apps Script 的 **Script properties**（属性名 `REVIEW_KEY`），**不要写进 README / GitHub，也不要发到公开地方**。
 
-```text
-chen-yu-wish-review-2026
-```
-
-打开审核页后输入上面的密钥，即可批准或删除待审留言。
+设置方法：Apps Script → 齿轮 Project Settings → Script properties → 添加 `REVIEW_KEY`。  
+打开 https://yyianyu.github.io/wedding/review 后输入该密钥即可审核。
 
 ## Google Drive / Apps Script
 
